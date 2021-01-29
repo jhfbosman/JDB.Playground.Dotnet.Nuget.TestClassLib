@@ -1,3 +1,5 @@
+# This is a SAMPLE playground. A LOT of this can be seperated into different flows/actions
+
 name: Buid, Test and Deploy
 
 on:
@@ -9,6 +11,12 @@ on:
         description: "True if this an official build. On non-official builds we don't burn in a git sha."
         default: false
         required: true
+      # I cannot simply set it to an empty string using -p:VersionSuffix= as that will
+      # override the logic in the props file with an empty suffix since cli params takes precedence
+      versionSuffix:
+        description: "Explicitly provide the version suffix"
+        default: ""
+        required: false
 
 jobs:
   build:
@@ -34,11 +42,19 @@ jobs:
         NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
     - name: Restore dependencies
       run: dotnet restore
-    - name: Build
+    - name: Build with suffix
+      if: ${{ github.event.inputs.versionSuffix != "" }}
+      run: dotnet build --no-restore -p:OfficialBuild=${{ github.event.inputs.isOfficialBuild }} -p:VersionSuffix=${{ github.event.inputs.versionSuffix}}
+    - name: Build without suffix
+      if: ${{ github.event.inputs.versionSuffix == "" }}
       run: dotnet build --no-restore -p:OfficialBuild=${{ github.event.inputs.isOfficialBuild }}
     - name: Test
       run: dotnet test --no-build --verbosity normal
-    - name: Create the Nuget package
+    - name: Create the Nuget package with suffix
+      if: ${{ github.event.inputs.versionSuffix != "" }}
+      run: dotnet pack --configuration Release -p:OfficialBuild=${{ github.event.inputs.isOfficialBuild }} -p:VersionSuffix=${{ github.event.inputs.versionSuffix}}
+    - name: Create the Nuget package without suffix
+      if: ${{ github.event.inputs.versionSuffix == "" }}
       run: dotnet pack --configuration Release -p:OfficialBuild=${{ github.event.inputs.isOfficialBuild }}
     - name: Publish the Nuget package to GPR
       run: dotnet nuget push ./bin/Release/*.nupkg
