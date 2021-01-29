@@ -1,4 +1,4 @@
-name: .NET
+name: Buid, Test and Deploy
 
 on:
   workflow_dispatch:
@@ -36,4 +36,4 @@ jobs:
     - name: Create the Nuget package
       run: dotnet pack --configuration Release
     - name: Publish the Nuget package to GPR
-      run: dotnet nuget push JDB.Playground.Dotnet.Nuget.TestClassLib/bin/Release/*.nupkg
+      run: dotnet nuget push ./bin/Release/*.nupkg
