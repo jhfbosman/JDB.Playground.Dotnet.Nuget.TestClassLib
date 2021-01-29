@@ -34,6 +34,6 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Create the Nuget package
-      run: dotnet pack --configuration Release
+      run: dotnet pack --configuration Release JDB.Playground.Dotnet.Nuget.TestClassLib
     - name: Publish the Nuget package to GPR
-      run: dotnet nuget push ./bin/Release/*.nupkg
+      run: dotnet nuget push JDB.Playground.Dotnet.Nuget.TestClassLib/bin/Release/*.nupkg
