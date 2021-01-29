@@ -1,0 +1,5 @@
+<Project>
+  <PropertyGroup>
+    <InformationalVersion>$(Version) - Commit Hash: $(GitHeadSha)</InformationalVersion>
+  </PropertyGroup>
+</Project>

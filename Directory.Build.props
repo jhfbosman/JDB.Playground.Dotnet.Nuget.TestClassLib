@@ -1,0 +1,73 @@
+<Project>
+  <PropertyGroup>
+    <SourceRoot>$(MSBuildThisFileDirectory)</SourceRoot>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Authors>JHF Bosman &lt;jhfbosman@detached.co.za&gt;</Authors>
+    <Company>Detached Solutions (Pty) Ltd</Company>
+    <Product>JD's Playground</Product>
+    <Copyright>© JHF Bosman. All rights reserved.</Copyright>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <PackageProjectUrl>https://github.com/jhfbosman/JDB.Playground.Dotnet.Nuget.TestClassLib</PackageProjectUrl>
+    <PackageIcon>logo_128.png</PackageIcon>
+    <PackageTags>Detached Framework C# .NET</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReleaseNotes></PackageReleaseNotes>
+    <RepositoryUrl>https://github.com/jhfbosman/JDB.Playground.Dotnet.Nuget.TestClassLib.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <IncludeSymbols>true</IncludeSymbols>
+    <IncludeSource>true</IncludeSource>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Versioning">
+    <SecondsSinceMidnight>$([System.DateTime]::Now.Subtract($([System.DateTime]::Now.Date)).TotalSeconds.ToString('#0'))</SecondsSinceMidnight>
+    <BuildRevision>$([MSBuild]::Divide($(SecondsSinceMidnight), 2).ToString('#0'))</BuildRevision>
+    <VersionPrefix Condition=" '$(VersionPrefix)'=='' ">1.0.0</VersionPrefix>
+    <AssemblyVersion Condition=" '$(AssemblyVersion)'=='' ">$(VersionPrefix)</AssemblyVersion>
+    <FileVersion>$(AssemblyVersion).$(BuildRevision)</FileVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(OfficialBuild)' != 'true'">
+    <VersionDateSuffix Condition=" '$(VersionDateSuffix)'=='' ">$([System.DateTime]::UtcNow.ToString(yyyyMMddHHmm))</VersionDateSuffix>
+    <VersionSuffix Condition=" '$(VersionSuffix)'=='' ">dev</VersionSuffix>
+    <VersionSuffix Condition=" '$(VersionDateSuffix)'!='' ">$(VersionSuffix)-$(VersionDateSuffix)</VersionSuffix>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="$(SourceRoot)assets/logo_128.png" Pack="true" Visible="false" PackagePath="/" />
+  </ItemGroup>
+
+  <Choose>
+    <When Condition="'$(OfficialBuild)' != 'true'">
+      <!-- On non-official builds we don't burn in a git sha.  In large part because it
+           hurts our determinism efforts as binaries which should be the same between
+           builds will not (due to developers building against different HEAD
+           values -->
+      <PropertyGroup>
+        <GitHeadSha>&lt;developer build&gt;</GitHeadSha>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(BUILD_SOURCEVERSION)' != ''">
+      <PropertyGroup>
+        <GitHeadSha>$(BUILD_SOURCEVERSION)</GitHeadSha>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(BUILD_SOURCEVERSION)' == '' AND '$(GIT_COMMIT)' != ''">
+      <PropertyGroup>
+        <GitHeadSha>$(GIT_COMMIT)</GitHeadSha>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <GitHeadSha>Not found</GitHeadSha>
+        <DotGitDir>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)/.git'))</DotGitDir>
+        <HeadFileContent Condition="Exists('$(DotGitDir)/HEAD')">$([System.IO.File]::ReadAllText('$(DotGitDir)/HEAD').Trim())</HeadFileContent>
+        <RefPath Condition="$(HeadFileContent.StartsWith('ref: '))">$(DotGitDir)/$(HeadFileContent.Substring(5))</RefPath>
+        <GitHeadSha Condition="'$(RefPath)' != '' AND Exists('$(RefPath)')">$([System.IO.File]::ReadAllText('$(RefPath)').Trim())</GitHeadSha>
+        <GitHeadSha Condition="'$(HeadFileContent)' != '' AND '$(RefPath)' == ''">$(HeadFileContent)</GitHeadSha>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+</Project>
