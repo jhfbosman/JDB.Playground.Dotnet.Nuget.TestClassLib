@@ -4,6 +4,11 @@ on:
   workflow_dispatch:
     branches:
       - main
+    inputs:
+      isOfficialBuild:
+        description: On non-official builds we don't burn in a git sha.
+        default: false
+        required: true
 
 jobs:
   build:
@@ -30,7 +35,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore -p:OfficialBuild=${{ github.event.inputs.isOfficialBuild }}
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Create the Nuget package
