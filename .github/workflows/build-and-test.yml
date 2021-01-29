@@ -17,6 +17,8 @@ jobs:
       with:
         dotnet-version: 5.0.x
         source-url: https://nuget.pkg.github.com/jhfbosman/index.json
+      env:
+        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
     - uses: actions/cache@v2
       with:
         path: ~/.nuget/packages
