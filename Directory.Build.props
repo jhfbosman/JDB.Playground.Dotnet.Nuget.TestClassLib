@@ -10,7 +10,7 @@
     <Copyright>© JHF Bosman. All rights reserved.</Copyright>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageProjectUrl>https://github.com/jhfbosman/JDB.Playground.Dotnet.Nuget.TestClassLib</PackageProjectUrl>
-    <PackageIcon>logo_128.png</PackageIcon>
+    <PackageIcon>icon-128x128.png</PackageIcon>
     <PackageTags>Detached Framework C# .NET</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReleaseNotes></PackageReleaseNotes>
@@ -36,7 +36,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="$(SourceRoot)assets/logo_128.png" Pack="true" Visible="false" PackagePath="/" />
+    <None Include="$(SourceRoot)assets/icon-128x128.png" Pack="true" Visible="false" PackagePath="/" />
   </ItemGroup>
 
   <Choose>
